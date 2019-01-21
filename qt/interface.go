@@ -208,7 +208,6 @@ func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
 
 		f.Close()
 	}
-	//only returns the first image in the pdf
-	//i.e pdf's should be just 1 page long
+
 	return originalDir, imageFiles
 }
