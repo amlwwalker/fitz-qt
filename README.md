@@ -12,7 +12,7 @@ The application offers an interface to be able to load all the pages of a pdf as
 * Compile inside the `qt` directory with `qtdeploy test desktop`
 * Once it compiles and runs you will see a window open with a bar like
 
-![https://imgur.com/a/eqDfjCj]()
+![https://imgur.com/a/eqDfjCj]
 
 * To use the app
 
