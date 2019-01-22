@@ -34,7 +34,7 @@ func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
 	}
 	pages := mw.GetNumberImages()
 
-	go q.SendMessage("OK , reading pdf " + pdfPath)
+	go q.SendMessage("OK, reading pdf " + pdfPath)
 	dirName, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject))
 	originalDir, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject, "original"))
 	fmt.Println("pages ", pages)
