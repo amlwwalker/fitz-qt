@@ -12,7 +12,7 @@ func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
 	//most don''t need the pdf ext
 	origDirPath := ABSOLUTE_PATH_URL
 	subject := strings.Replace(filePath, ".pdf", "", -1)
-	go q.SendMessage("requested to open subject " + subject + " THEN PAUSING")
+	q.SendMessage("requested to open subject " + subject + " THEN PAUSING")
 	var imageFiles []string
 	fmt.Println("and.... getting ready to read the pdf " + filepath.Join(origDirPath, subject) + ".pdf")
 	pdfPath := filepath.Join(origDirPath, subject) + ".pdf"
@@ -29,13 +29,13 @@ func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
 	}
 	pages := mw.GetNumberImages()
 
-	go q.SendMessage("OK reading pdf " + pdfPath)
+	q.SendMessage("OK reading pdf " + pdfPath)
 	// dirName, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject))
 	originalDir, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject, "original"))
 	fmt.Println("pages ", pages)
 	for n := uint(0); n < pages; n++ {
 		//get the first pdf page to convert to an image
-		go q.SendMessage("OK, creating png at " + filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)))
+		q.SendMessage("OK, creating png at " + filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)))
 
 		mw.SetIteratorIndex(int(n)) // This being the page offset
 		fmt.Println("index ", mw.GetIteratorIndex())
