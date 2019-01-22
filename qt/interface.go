@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"image/png"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -11,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/amlwwalker/pdf-editor/utils"
-	fitz "github.com/gen2brain/go-fitz"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 )
@@ -144,71 +142,71 @@ func CreateDirIfNotExist(dir string) (string, error) {
 	return dir, nil
 }
 
-func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
-	//most don''t need the pdf ext
-	origDirPath := ABSOLUTE_PATH_URL
-	subject := strings.Replace(filePath, ".pdf", "", -1)
-	q.SendMessage("requested to open subject " + subject)
-	var imageFiles []string
+// func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
+// 	//most don''t need the pdf ext
+// 	origDirPath := ABSOLUTE_PATH_URL
+// 	subject := strings.Replace(filePath, ".pdf", "", -1)
+// 	q.SendMessage("requested to open subject " + subject)
+// 	var imageFiles []string
 
-	fmt.Println("and.... getting ready to read the pdf " + filepath.Join(origDirPath, subject) + ".pdf")
-	// return "", imageFiles
-	// TODO: BUG. CRASHES ON WINDOWS
-	doc, err := fitz.New(filepath.Join(origDirPath, subject) + ".pdf")
-	if err != nil {
-		q.SendMessage("fitz error " + err.Error())
-	}
-	q.SendMessage("and.... getting ready to read the directory " + origDirPath + "/" + subject)
+// 	fmt.Println("and.... getting ready to read the pdf " + filepath.Join(origDirPath, subject) + ".pdf")
+// 	// return "", imageFiles
+// 	// TODO: BUG. CRASHES ON WINDOWS
+// 	doc, err := fitz.New(filepath.Join(origDirPath, subject) + ".pdf")
+// 	if err != nil {
+// 		q.SendMessage("fitz error " + err.Error())
+// 	}
+// 	q.SendMessage("and.... getting ready to read the directory " + origDirPath + "/" + subject)
 
-	defer doc.Close()
-	q.SendMessage("OK, reading directory " + origDirPath + "/" + subject)
-	dirName, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject))
+// 	defer doc.Close()
+// 	q.SendMessage("OK, reading directory " + origDirPath + "/" + subject)
+// 	dirName, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject))
 
-	originalDir, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject, "original"))
-	// Extract pages as images
-	q.SendMessage("OK, extracting information. Pause ")
+// 	originalDir, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject, "original"))
+// 	// Extract pages as images
+// 	q.SendMessage("OK, extracting information. Pause ")
 
-	for n := 0; n < doc.NumPage(); n++ {
-		img, err := doc.Image(n)
-		if err != nil {
-			q.SendMessage("CreateDirIfNotExist error" + err.Error())
-		}
-		q.SendMessage("OK, creating png at " + filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)) + "Pause ")
+// 	for n := 0; n < doc.NumPage(); n++ {
+// 		img, err := doc.Image(n)
+// 		if err != nil {
+// 			q.SendMessage("CreateDirIfNotExist error" + err.Error())
+// 		}
+// 		q.SendMessage("OK, creating png at " + filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)) + "Pause ")
 
-		f, err := os.Create(filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)))
-		if err != nil {
-			q.SendMessage("create image error " + err.Error())
-		}
+// 		f, err := os.Create(filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)))
+// 		if err != nil {
+// 			q.SendMessage("create image error " + err.Error())
+// 		}
 
-		if err = png.Encode(f, img); err != nil {
-			q.SendMessage("image encode error " + err.Error())
-		}
+// 		if err = png.Encode(f, img); err != nil {
+// 			q.SendMessage("image encode error " + err.Error())
+// 		}
 
-		f.Close()
-		imageFiles = append(imageFiles, fmt.Sprintf(subject+".orig.%03d.png", n))
-	}
-	CreateDirIfNotExist(filepath.Join(origDirPath, subject, "edit"))
+// 		f.Close()
+// 		imageFiles = append(imageFiles, fmt.Sprintf(subject+".orig.%03d.png", n))
+// 	}
+// 	CreateDirIfNotExist(filepath.Join(origDirPath, subject, "edit"))
 
-	// Extract pages as text
-	for n := 0; n < doc.NumPage(); n++ {
-		text, err := doc.Text(n)
-		if err != nil {
-			q.SendMessage("read pdf for text error " + err.Error())
-		}
+// 	// Extract pages as text
+// 	for n := 0; n < doc.NumPage(); n++ {
+// 		text, err := doc.Text(n)
+// 		if err != nil {
+// 			q.SendMessage("read pdf for text error " + err.Error())
+// 		}
 
-		f, err := os.Create(filepath.Join(dirName, fmt.Sprintf(subject+".%03d.txt", n)))
-		if err != nil {
-			q.SendMessage("create text error " + err.Error())
-		}
+// 		f, err := os.Create(filepath.Join(dirName, fmt.Sprintf(subject+".%03d.txt", n)))
+// 		if err != nil {
+// 			q.SendMessage("create text error " + err.Error())
+// 		}
 
-		_, err = f.WriteString(text)
-		if err != nil {
-			q.SendMessage("write image error " + err.Error())
-		}
+// 		_, err = f.WriteString(text)
+// 		if err != nil {
+// 			q.SendMessage("write image error " + err.Error())
+// 		}
 
-		f.Close()
-	}
-	//only returns the first image in the pdf
-	//i.e pdf's should be just 1 page long
-	return originalDir, imageFiles
-}
+// 		f.Close()
+// 	}
+// 	//only returns the first image in the pdf
+// 	//i.e pdf's should be just 1 page long
+// 	return originalDir, imageFiles
+// }
